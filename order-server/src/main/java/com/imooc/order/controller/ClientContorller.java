@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,15 +25,15 @@ public class ClientContorller {
 //    @Autowired
 //    private LoadBalancerClient loadBalancerClient;
 
-    @Autowired
-    private RestTemplate restTemplate;
+//    @Autowired
+//    private RestTemplate restTemplate;
 
     @Autowired
     private ProductClient productClient;
 
     //RestTemplate
-    @GetMapping("/getProductMsg")
-    public String getProductMsg() {
+//    @GetMapping("/getProductMsg")
+//    public String getProductMsg() {
         //1.第一种方式（直接使用restTemplate,url写死）
 //        RestTemplate restTemplate = new RestTemplate();
 //        String response = restTemplate.getForObject("http://localhost:8080/msg",String.class);
@@ -46,11 +45,11 @@ public class ClientContorller {
 //        String response = restTemplate.getForObject("http://localhost:8080/msg",String.class);
 
         //3.第三种方式(利用@LoadBalanced，可在RestTemplate里使用应用名字)
-        String response = restTemplate.getForObject("http://product/msg", String.class);
+//        String response = restTemplate.getForObject("http://product/msg", String.class);
 
-        log.info("response={}", response);
-        return response;
-    }
+//        log.info("response={}", response);
+//        return response;
+//    }
 
 
     //Feign

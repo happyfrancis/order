@@ -1,5 +1,6 @@
 package com.imooc.order.controller;
 
+import com.imooc.order.dto.OrderDto;
 import com.imooc.order.message.StreamClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.messaging.Processor;
@@ -23,9 +24,19 @@ public class SendMessageController {
     @Autowired
     private StreamClient streamClient;
 
+//    @GetMapping("/sendMessage")
+//    public void process(){
+//        String message = "now: "+new Date();
+//        streamClient.output().send(MessageBuilder.withPayload(message).build());
+//    }
+
+    /**
+     * 发送orderDto对象
+     */
     @GetMapping("/sendMessage")
-    public void process(){
-        String message = "now: "+new Date();
-        streamClient.output().send(MessageBuilder.withPayload(message).build());
+    public void process() {
+        OrderDto orderDto = new OrderDto();
+        orderDto.setOrderId("123456");
+        streamClient.output().send(MessageBuilder.withPayload(orderDto).build());
     }
 }

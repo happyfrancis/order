@@ -12,6 +12,8 @@ import com.imooc.order.dataobject.OrderMaster;
 import com.imooc.order.dto.OrderDto;
 import com.imooc.order.enums.OrderStatusEnum;
 import com.imooc.order.enums.PayStatusEnum;
+import com.imooc.order.enums.ResultEnum;
+import com.imooc.order.exception.OrderException;
 import com.imooc.order.repository.OrderDetailRepository;
 import com.imooc.order.repository.OrderMasterRepository;
 import com.imooc.order.service.OrderService;
@@ -23,10 +25,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -86,4 +90,41 @@ public class OrderServiceImpl implements OrderService {
         orderMasterRepository.save(orderMaster);
         return orderDto;
     }
+
+    @Override
+    @Transactional
+    public OrderDto finish(String orderId) {
+        //1.先查询订单
+        Optional<OrderMaster> orderMasterOptional = orderMasterRepository.findById(orderId);
+        if(!orderMasterOptional.isPresent()){
+            throw new OrderException(ResultEnum.ORDER_NOT_EXIST);
+        }
+
+        //2.判断订单状态
+        OrderMaster orderMaster = orderMasterOptional.get();
+        if(OrderStatusEnum.NEW.getCode() != orderMaster.getOrderStatus()){
+            throw new OrderException(ResultEnum.ORDER_STATUS_ERROR);
+        }
+
+        //3.修改订单状态为完结
+        orderMaster.setOrderStatus(OrderStatusEnum.FINISHED.getCode());
+        orderMasterRepository.save(orderMaster);
+
+        //4.查询订单详情
+        List<OrderDetail> orderDetailList = orderDetailRepository.findByOrderId(orderId);
+        if(CollectionUtils.isEmpty(orderDetailList)){
+            throw new OrderException(ResultEnum.ORDER_DETAIL_NOT_EXIST);
+        }
+
+        OrderDto orderDto = new OrderDto();
+        BeanUtils.copyProperties(orderMaster,orderDto);
+        orderDto.setOrderDetailList(orderDetailList);
+
+        return orderDto;
+    }
+
+    //异步扣库存分析
+    //1.库存在Redis中保存
+    //2.收到请求Redis判断是否库存充足，减掉Redis中库存
+    //3.订单服务创建订单写入数据库，并发送消息
 }

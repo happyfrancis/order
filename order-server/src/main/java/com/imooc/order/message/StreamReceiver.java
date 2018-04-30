@@ -1,8 +1,10 @@
 package com.imooc.order.message;
 
+import com.imooc.order.dto.OrderDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,8 +18,24 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class StreamReceiver {
 
+//    @StreamListener(StreamClient.INPUT)
+//    public void process1(Object message){
+//         log.info("StreamReceiver: {}",message);
+//    }
+
+    /**
+     * 接收orderDto对象  消息
+     * @param message
+     */
     @StreamListener(StreamClient.INPUT)
-    public void process1(Object message){
+    @SendTo(StreamClient.INPUT2)
+    public String process1(OrderDto message){
          log.info("StreamReceiver: {}",message);
+         return "received.";
+    }
+
+    @StreamListener(value = StreamClient.INPUT2)
+    public void process2(String message){
+         log.info("StreamReceiver2: {}",message);
     }
 }
