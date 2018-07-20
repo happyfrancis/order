@@ -21,8 +21,8 @@ import java.util.Date;
 @RestController
 public class SendMessageController {
 
-    @Autowired
-    private StreamClient streamClient;
+//    @Autowired
+//    private StreamClient streamClient;
 
 //    @GetMapping("/sendMessage")
 //    public void process(){
@@ -37,6 +37,6 @@ public class SendMessageController {
     public void process() {
         OrderDto orderDto = new OrderDto();
         orderDto.setOrderId("123456");
-        streamClient.output().send(MessageBuilder.withPayload(orderDto).build());
+//        streamClient.output().send(MessageBuilder.withPayload(orderDto).build());
     }
 }

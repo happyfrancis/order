@@ -34,21 +34,21 @@ public class HystrixController {
 //    })
 
     //熔断配置
-    @HystrixCommand(commandProperties = {
-            @HystrixProperty(name = "circuitBreaker.enabled",value ="true" ),//设置断路器开启
-            @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold",value = "10" ),//设置在滚动时间窗口中断路器的最小请求数
-            @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds",value = "10000" ),//在这段时间将一直调用回调函数（熔断函数）
-            @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage",value = "60"),//设置断路器打开的错误百分比条件 60%
-    })
+//    @HystrixCommand(commandProperties = {
+//            @HystrixProperty(name = "circuitBreaker.enabled",value ="true" ),//设置断路器开启
+//            @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold",value = "10" ),//设置在滚动时间窗口中断路器的最小请求数
+//            @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds",value = "10000" ),//在这段时间将一直调用回调函数（熔断函数）
+//            @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage",value = "60"),//设置断路器打开的错误百分比条件 60%
+//    })
 
-    //@HystrixCommand //可以把相关配置都写到启动配置文件中
+    @HystrixCommand //可以把相关配置都写到启动配置文件中
     @GetMapping("/getProductInfoList")
     public String getProductInfoList(@RequestParam("number") Integer number){
         if(number % 2 == 0){
             return "success";
         }
         RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.postForObject("http://127.0.0.1:8082/product/listForOrder",
+        return restTemplate.postForObject("http://127.0.0.1:8004/product/listForOrder",
                 Arrays.asList("157875196366160022"),
                 String.class);
 
